@@ -1,0 +1,33 @@
+.agents/
+.codex/
+
+# Local environments and caches
+.venv/
+venv/
+__pycache__/
+.ipynb_checkpoints/
+.cache/
+
+# Generated/runtime outputs
+outputs/
+logs/
+wandb/
+checkpoints/
+
+# Local or personal artifacts
+*.env
+.env*
+*.traineddata
+*.pdf
+
+# Large data/model artifacts
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.npy
+*.npz
+*.mat
+*.zip
+*.tar
+*.parquet

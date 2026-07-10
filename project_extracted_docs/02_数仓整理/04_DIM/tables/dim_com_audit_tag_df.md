@@ -9,6 +9,16 @@ DIM
 - 本文件由截图内容整理为可复制 SQL/Markdown，不再保留截图左侧行号。
 - 多张分段截图已按同一张表/同一段 SQL 进行拼接。
 - 截图右侧被截断或无法确认的位置保留 `TODO`，未强行编造。
+- 上游 `ods_community_audit_tag_df` 的 DDL 已由用户于 2026-07-10 补充并纳入 ODS 目录。
+
+## 上下游与关联用途
+
+- 上游：`ods_community_audit_tag_df`。
+- 本表通过直接 SELECT 将审核标签编码和名称加工为 `dim_com_audit_tag_df`。
+- 下游：`dwm_com_audit_ai_blue_input_detail_di`。
+- 下游第一次关联用于把 `machine_tag_code` 映射为 `machine_tag_name_list`；第二次关联用于把 `tag_code` 映射为 `tag_name_list`。
+
+因此，`ods_community_audit_tag_df` 是蓝军 input 宽表中机审、人审标签名称的间接上游，需要保留。
 
 ## SQL 文件
 

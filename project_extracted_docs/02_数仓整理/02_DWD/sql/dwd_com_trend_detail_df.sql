@@ -5,6 +5,8 @@
 -- - 数仓/dwd/dwd_com_trend_detail_df(4).png
 -- - 数仓/dwd/dwd_com_trend_detail_df_代码1.png
 -- - 数仓/dwd/dwd_com_trend_detail_df_代码2.png
+-- 用户于 2026-07-10 确认删除原截图中的 t0.machine_tag_code：
+-- t0 来源为动态 ODS，该字段属于审核结果链路，后续由 dwd_com_audit_detail_df 提供。
 
 CREATE TABLE `yshopping`.`dwd_com_trend_detail_df` (
     trend_id STRING COMMENT '内容ID',
@@ -125,7 +127,6 @@ SELECT
     t0.audit_tag_id,
     t0.audit_tag_name,
     t0.url,
-    t0.machine_tag_code,
     FROM_UNIXTIME(CAST(t0.create_time / 1000 AS BIGINT)) AS create_time,
     FROM_UNIXTIME(CAST(t0.modify_time / 1000 AS BIGINT)) AS modify_time
 FROM yshopping.ods_community_community_trend_df t0

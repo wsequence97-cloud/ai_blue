@@ -9,6 +9,7 @@ DIM
 - 本文件由截图内容整理为可复制 SQL/Markdown，不再保留截图左侧行号。
 - 多张分段截图已按同一张表/同一段 SQL 进行拼接。
 - 截图右侧被截断或无法确认的位置保留 `TODO`，未强行编造。
+- 用户于 2026-07-10 确认上游 `ods_community_ecology_tag_df` 不属于当前蓝军主链路；本表仅保留为历史截图还原，不纳入当前项目缺表清单或执行链路。
 
 ## SQL 文件
 
@@ -19,6 +20,8 @@ DIM
 ```sql
 -- 来源截图：
 -- - 数仓/dim/dim_com_ecology_tag_df.png
+-- 用户于 2026-07-10 确认 ods_community_ecology_tag_df 不属于当前蓝军主链路；
+-- 本 SQL 仅保留为历史截图还原，不纳入当前项目缺表清单或执行链路。
 
 CREATE TABLE `yshopping`.`dim_com_ecology_tag_df` (
     tag_code STRING COMMENT '标签编码',

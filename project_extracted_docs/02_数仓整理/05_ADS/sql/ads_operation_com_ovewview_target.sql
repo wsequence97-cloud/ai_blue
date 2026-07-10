@@ -5,8 +5,11 @@
 -- - 数仓/ads/ads_operation_com_ovewview_target_代码(2).png
 -- - 数仓/ads/ads_operation_com_ovewview_target_代码(3).png
 -- - 数仓/ads/ads_operation_com_ovewview_target_具体计算公式(1-5).png
+-- - 用户于 2026-07-10 补充的横向裁切代码截图（SELECT 第 2-30 行）
 -- 注意：overview 在截图文件名和表名中写作 ovewview，本文保持截图原始拼写。
--- 注意：代码截图右侧多处被截断，本脚本保留可确认部分，完整指标 SQL 仍需人工核对公式图。
+-- 用户确认：DDL 原第 5、6 行的 ai_blue_attack_cnt_1d 为重复字段，本文只保留一个。
+-- 用户确认：原截图没有 INSERT OVERWRITE TABLE ... PARTITION(...)，以下按原图保留为独立 SELECT。
+-- 注意：源 SQL 中相似度阈值与部分公式图的中文说明不完全一致，本文按代码截图原样整理。
 
 CREATE TABLE `yshopping`.`ads_operation_com_ovewview_target` (
     date_id STRING COMMENT '业务日期',
@@ -40,7 +43,7 @@ PARTITIONED BY (`pt` STRING COMMENT '业务日期')
 STORED AS PARQUET
 TBLPROPERTIES ('table.source'='自定义', 'PARTITION_LIFECYCLE'='365', 'table.creator'='764815144@qq.com', 'SYNC_METASTORE'='on');
 
--- TODO: 以下 SQL 根据截图可见部分整理，右侧被截断的 count(if(...)) 表达式需结合公式图人工补齐后再执行。
+-- 原截图未提供 INSERT OVERWRITE，本段为独立指标查询。
 SELECT
     SUBSTR(ai_blue_resource_create_time, 1, 10) AS date_id,
     ai_blue_content_type_name,
@@ -49,9 +52,42 @@ SELECT
     COUNT(user_style_request_id) AS ai_blue_user_cnt_1d,
     SUM(is_used) AS ai_blue_used_cnt_1d,
     SUM(IF(ai_blue_similarity >= 0.7 AND person_audit_result IN ('init','pass'), attack_task_cnt_7d, 0)) AS ai_blue_similarity_person_audit_fail_cnt_1d,
-    SUM(IF(ai_blue_similarity > 0.7, attack_task_cnt_7d, 0)) AS ai_blue_similarity_cnt_1d,
+    SUM(IF(ai_blue_similarity >= 0.7, attack_task_cnt_7d, 0)) AS ai_blue_similarity_cnt_1d,
     SUM(IF(ai_blue_similarity < 0.7 AND person_audit_result IN ('init','pass'), ai_blue_difficulty_level, 0)) AS ai_blue_similarity_person_audit_fail_difficulty_level_1d,
-    SUM(IF(ai_blue_similarity < 0.7, ai_blue_difficulty_level, 0)) AS ai_blue_similarity_difficulty_level_1d
+    SUM(IF(ai_blue_similarity > 0.7, ai_blue_difficulty_level, 0)) AS ai_blue_similarity_difficulty_level_1d,
+    COUNT(IF(
+        ai_blue_sample_code=0
+        AND (machine_tag_result_code NOT IN ('init','pass') OR tag_result_code NOT IN ('init','pass'))
+        AND is_used=1,
+        attack_task_id,
+        NULL
+    )) AS ai_blue_black_sample_second_audit_success_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=0 AND is_used=1, attack_task_id, NULL)) AS ai_blue_black_sample_second_cnt_1d,
+    COUNT(IF(
+        ai_blue_sample_code=1
+        AND (machine_tag_result_code NOT IN ('init','pass') OR tag_result_code IN ('init','pass'))
+        AND is_used=1,
+        attack_task_id,
+        NULL
+    )) AS ai_blue_white_sample_second_audit_success_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=1 AND is_used=1, attack_task_id, NULL)) AS ai_blue_white_sample_second_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=0 AND machine_tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_machine_audit_fail_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=0 AND machine_tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_machine_audit_success_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=0, attack_task_id, NULL)) AS ai_blue_black_sample_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=1 AND machine_tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_machine_audit_fail_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=1 AND machine_tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_machine_audit_success_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=1, attack_task_id, NULL)) AS ai_blue_white_sample_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=0 AND tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_person_audit_fail_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=0 AND tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_person_audit_success_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=1 AND tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_person_audit_fail_cnt_1d,
+    COUNT(IF(ai_blue_sample_code=1 AND tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_person_audit_success_cnt_1d,
+    COUNT(IF(
+        ai_blue_sample_code=1
+        AND tag_result_code NOT IN ('init','pass')
+        AND machine_tag_result_code IN ('init','pass'),
+        attack_task_id,
+        NULL
+    )) AS ai_blue_black_sample_machine_success_person_audit_fail_cnt_1d
 FROM yshopping.dwm_com_audit_ai_blue_output_detail_df t0
 LEFT JOIN (
     SELECT

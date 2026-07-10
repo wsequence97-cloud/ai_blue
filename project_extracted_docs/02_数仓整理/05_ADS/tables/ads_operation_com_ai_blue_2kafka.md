@@ -1,4 +1,4 @@
-﻿# ads_operation_com_ai_blue_2kafka
+# ads_operation_com_ai_blue_2kafka
 
 ## 所属分层
 
@@ -8,7 +8,8 @@ ADS
 
 - 本文件由截图内容整理为可复制 SQL/Markdown，不再保留截图左侧行号。
 - 多张分段截图已按同一张表/同一段 SQL 进行拼接。
-- 截图右侧被截断或无法确认的位置保留 `TODO`，未强行编造。
+- 用户于 2026-07-10 补充确认完整 `TBLPROPERTIES` 右侧属性。
+- 用户确认原始资料本身没有提供 INSERT；本文不补造写表语句，保留独立 SELECT。
 
 ## SQL 文件
 
@@ -21,6 +22,8 @@ ADS
 -- - 数仓/ads/ads_operation_com_ai_blue_2kafka.png
 -- - 数仓/ads/ads_operation_com_ai_blue_2kafka_代码.png
 -- - 数仓/ads/ads_operation_com_ai_blue_2kafka推数样式.png
+-- 用户于 2026-07-10 补充确认完整 TBLPROPERTIES 右侧属性。
+-- 用户确认原始资料本身没有提供 INSERT，本文件按截图保留独立 SELECT。
 
 CREATE TABLE `yshopping`.`ads_operation_com_ai_blue_2kafka` (
     ai_blue_json STRING
@@ -31,9 +34,11 @@ STORED AS PARQUET
 TBLPROPERTIES (
     'table.source'='自定义',
     'PARTITION_LIFECYCLE'='730',
-    'table.creator'='TODO: 截图右侧被截断，需人工确认'
+    'table.creator'='764815144@qq.com',
+    'SYNC_METASTORE'='on'
 );
 
+-- 原始资料未提供 INSERT，以下为独立 JSON 转换查询。
 SELECT
     TO_JSON(
         MAP(

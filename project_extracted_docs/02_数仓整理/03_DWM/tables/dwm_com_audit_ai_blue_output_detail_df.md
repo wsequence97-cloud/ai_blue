@@ -9,6 +9,9 @@ DWM
 - 本文件由截图内容整理为可复制 SQL/Markdown，不再保留截图左侧行号。
 - 多张分段截图已按同一张表/同一段 SQL 进行拼接。
 - 截图右侧被截断或无法确认的位置保留 `TODO`，未强行编造。
+- 用户于 2026-07-10 补充的截图确认原代码第 35-37 行为空行；已补入第 38 行 `ai_blue_user_name` 和第 40 行 `ai_blue_user_icon`。
+- 补入后上述两个字段与建表语句前文存在同名字段，本文按截图原样保留，生产表实际字段命名仍需确认。
+- SELECT 同时输出 `t1`、`t2` 两组 `ai_blue_user_id/name/icon`，但 DDL 只声明一个 `ai_blue_user_id`；DDL 的 `user_id` 也没有对应的 `t3.user_id` 表达式，因此第 32-42 列存在按位置错配风险。
 
 ## SQL 文件
 
@@ -24,6 +27,10 @@ DWM
 -- - 数仓/dwm/dwm_com_audit_ai_blue_output_detail_df_代码(1).png
 -- - 数仓/dwm/dwm_com_audit_ai_blue_output_detail_df_代码(2).png
 -- - 数仓/dwm/dwm_com_audit_ai_blue_output_detail_df_代码(3).png
+-- - 用户于 2026-07-10 补充的建表截图（原代码第 30-44 行）
+-- 注意：补充截图确认第 35-37 行为空行；第 38、40 行字段按截图原样补入。
+-- 注意：补入后 ai_blue_user_name、ai_blue_user_icon 与前文存在同名字段。
+-- SELECT 还同时输出 t1/t2 两组 ai_blue_user_id/name/icon，但 DDL 只声明一个 ai_blue_user_id，且 DDL 的 user_id 没有对应的 t3.user_id；执行前需确认字段命名和列顺序。
 
 CREATE TABLE IF NOT EXISTS dwm_com_audit_ai_blue_output_detail_df(
     resource_id STRING COMMENT '素材id',
@@ -57,7 +64,9 @@ CREATE TABLE IF NOT EXISTS dwm_com_audit_ai_blue_output_detail_df(
     ai_blue_difficulty_level BIGINT COMMENT '困难等级',
     ai_blue_content_create_time STRING COMMENT '生成内容创建时间',
     ai_blue_content_modify_time STRING COMMENT '生成内容修改时间',
+    ai_blue_user_name STRING COMMENT '蓝军用户昵称',
     ai_blue_user_sign STRING COMMENT '蓝军用户签名',
+    ai_blue_user_icon STRING COMMENT '蓝军用户头像',
     ai_blue_user_remark STRING COMMENT '备注',
     ai_blue_user_create_time STRING COMMENT '生成用户系统时间',
     ai_blue_user_modify_time STRING COMMENT '生成用户修改时间',

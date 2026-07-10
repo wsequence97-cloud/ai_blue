@@ -1,5 +1,7 @@
 # 大模型社区智能蓝军 PRD 全文整理
 
+> 本文是早期 10 张截图的顺序转写。用户于 2026-07-10 补充完整 PRD 截图后形成的业务、Dify 与离线数仓综合理解，请以 `完整项目业务与数仓流程梳理.md` 为主。
+
 ## 1. 来源截图
 
 - `大模型社区智能蓝军PRD/1.png`
@@ -148,13 +150,13 @@ flowchart LR
 
 | 层级 | 表/节点 | 中文含义 |
 | --- | --- | --- |
-| DWM | `dwm_com_audit_ai_blue_detail_di` | ai 智能蓝军明细大宽表，前置链路使用 |
+| DWM | `dwm_com_audit_ai_blue_detail_di` | PRD 历史名称；用户确认与当前 `dwm_com_audit_ai_blue_output_detail_df` 为同一张逻辑表 |
 | ADS | `ads_operation_com_ai_blue_2kafka` | ai 蓝军数据推送 Kafka |
 | ODS | `ods_community_ai_blue_user_info_df` | ai 蓝军运营账号用户人设表 |
 | ODS | `ods_community_ai_blue_content_df` | ai 社区蓝军内容表 |
 | ODS | `ods_community_ai_blue_resource_df` | ai 蓝军社区蓝军素材表 |
 | ODS | `ods_community_ai_blue_user_attack_df` | ai 社区蓝军用户攻击表 |
-| DWD | `dwd_ai_workflow_workflow_detail_df` | 大模型工作流明细 |
+| DWD | `dwd_ai_workflow_workflow_runs_detail_df` | 大模型工作流执行明细 |
 | DWD | `dwd_com_audit_detail_df` | 社区域-审核域-审核结果表 |
 | DWD | `dwd_com_audit_ai_blue_user_info_df` | 社区域-审核域-ai 蓝军运营账号用户人设表 |
 | DWD | `dwd_com_audit_ai_blue_content_df` | 社区域-审核域-ai 社区蓝军内容表 |

@@ -1,7 +1,7 @@
 -- 来源截图：
 -- - 数仓/ods/ods_community_community_trend_df.png
 -- - 数仓/ods/ods_community_community_trend_df(2).png
--- 注意：截图右侧被截断，TBLPROPERTIES 末尾未完全拍到。
+-- 用户于 2026-07-10 补充确认 TBLPROPERTIES 右侧属性。
 CREATE TABLE `yshopping`.`ods_community_community_trend_df` (
     id STRING COMMENT '内容ID',
     content_type BIGINT COMMENT '内容类型：0图文 1视频 2有图点评',
@@ -64,5 +64,6 @@ STORED AS PARQUET
 TBLPROPERTIES (
     'table.source'='自定义',
     'PARTITION_LIFECYCLE'='365d',
-    'table.creator'='TODO: 截图右侧被截断，需人工确认'
+    'table.creator'='764815144@qq.com',
+    'SYNC_METASTORE'='on'
 );

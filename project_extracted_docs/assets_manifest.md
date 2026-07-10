@@ -78,9 +78,9 @@
 | 32 | 数仓/ods/ods_community_community_trend_df(样例_2).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_community_community_trend_df |
 | 33 | 数仓/ods/ods_community_community_trend_df(样例_3).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_community_community_trend_df |
 | 34 | 数仓/ods/ods_community_community_trend_df(样例_4).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_community_community_trend_df |
-| 35 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df.png | DWD | 数仓/dwd | 建表/表结构截图 | 初步归属表：dwd_ai_workflow_workflow_detail_df |
-| 36 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(1).png | DWD | 数仓/dwd | SQL/加工代码截图 | 初步归属表：dwd_ai_workflow_workflow_detail_df |
-| 37 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(2).png | DWD | 数仓/dwd | SQL/加工代码截图 | 初步归属表：dwd_ai_workflow_workflow_detail_df |
+| 35 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df.png | DWD | 数仓/dwd | 历史建表截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
+| 36 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(1).png | DWD | 数仓/dwd | 历史加工代码截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
+| 37 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(2).png | DWD | 数仓/dwd | 历史加工代码截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
 | 38 | 数仓/dwd/dwd_com_audit_ai_blue_content_df.png | DWD | 数仓/dwd | 建表/表结构截图 | 初步归属表：dwd_com_audit_ai_blue_content_df |
 | 39 | 数仓/dwd/dwd_com_audit_ai_blue_content_df_代码1.png | DWD | 数仓/dwd | SQL/加工代码截图 | 初步归属表：dwd_com_audit_ai_blue_content_df |
 | 40 | 数仓/dwd/dwd_com_audit_ai_blue_content_df_代码2.png | DWD | 数仓/dwd | SQL/加工代码截图 | 初步归属表：dwd_com_audit_ai_blue_content_df |

@@ -16,6 +16,7 @@ ODS
 - `数仓/ods/ods_community_community_audit_result_df.png`
 - `数仓/ods/ods_community_community_audit_result_df(样例1).png`
 - `数仓/ods/ods_community_community_audit_result_df(样例2).png`
+- 用户于 2026-07-10 补充确认 `tag_result` 枚举和完整 `TBLPROPERTIES`。
 
 ## 建表语句
 
@@ -30,7 +31,7 @@ CREATE TABLE `yshopping`.`ods_community_community_audit_result_df` (
     publish_time STRING COMMENT '发布时间',
     publish_content STRING COMMENT '发布内容',
     tag_code BIGINT COMMENT '人审打标code',
-    tag_result STRING COMMENT '处置结果：init-待审核, pass-通过, hide-隐藏, lock-封禁, remove-TODO截图右侧截断',
+    tag_result STRING COMMENT '处置结果：init-待审核, pass-通过, hide-隐藏, lock-封禁, remove-删除, only_fans-仅粉丝可见, anti_spam-反垃圾, show-显示, recover-恢复, unlock-解禁, ignore-忽略, reset-重...',
     tag_time STRING COMMENT '最新审核时间',
     tag_user_id BIGINT COMMENT '最新审核人ID',
     tag_user_name STRING COMMENT '最新审核人名称',
@@ -45,7 +46,13 @@ CREATE TABLE `yshopping`.`ods_community_community_audit_result_df` (
 )
 COMMENT 'ods-电商社区系统-审核结果表-全量表'
 PARTITIONED BY (`pt` STRING COMMENT '业务日期')
-STORED AS PARQUET;
+STORED AS PARQUET
+TBLPROPERTIES (
+    'table.source'='自定义',
+    'PARTITION_LIFECYCLE'='30d',
+    'table.creator'='764815144@qq.com',
+    'SYNC_METASTORE'='on'
+);
 ```
 
 ## 数据样例
@@ -56,7 +63,6 @@ STORED AS PARQUET;
 |---:|---|---:|---:|---|---|---|---|---|---|---|---:|---|---|---:|---|---|
 | 352637442 | y101 | 342657341 | 2145994100 | 2024-11-16 13:17:18 | 时尚简约长裤，轻松驾驭任何风格👖。优质面料，裁剪利落，无论是搭配牛仔裤还是衬衫，都不失格调，让你从人群中脱颖而出 | pass | 2024-11-16 13:17:56 | yx320 | yx320 | 图文 | 0 | 2024-11-16 13:17:20 | pass | 0 | 2024-11-16 13:17:18 | 2024-11-16 13:17:56 |
 
-## 待确认
+## 补充确认
 
-- `tag_result` 注释右侧被截断，`remove` 后续含义需人工确认。
-- 建表截图右侧被截断，`TBLPROPERTIES` 末尾需人工确认。
+- `tag_result` 截断部分和 `TBLPROPERTIES` 已由用户于 2026-07-10 补齐，不再作为待确认项。

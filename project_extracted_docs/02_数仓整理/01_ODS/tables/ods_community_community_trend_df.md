@@ -17,6 +17,7 @@ ODS
 - `数仓/ods/ods_community_community_trend_df(样例_2).png`
 - `数仓/ods/ods_community_community_trend_df(样例_3).png`
 - `数仓/ods/ods_community_community_trend_df(样例_4).png`
+- 用户于 2026-07-10 补充确认完整 `TBLPROPERTIES` 右侧属性。
 
 ## 建表语句
 
@@ -81,7 +82,13 @@ CREATE TABLE `yshopping`.`ods_community_community_trend_df` (
 )
 COMMENT 'ods-电商社区系统-动态主表-全量表'
 PARTITIONED BY (`pt` STRING COMMENT '业务日期')
-STORED AS PARQUET;
+STORED AS PARQUET
+TBLPROPERTIES (
+    'table.source'='自定义',
+    'PARTITION_LIFECYCLE'='365d',
+    'table.creator'='764815144@qq.com',
+    'SYNC_METASTORE'='on'
+);
 ```
 
 ## 数据样例
@@ -95,5 +102,4 @@ STORED AS PARQUET;
 
 ## 待确认
 
-- 建表截图右侧被截断，`TBLPROPERTIES` 末尾需人工确认。
 - 样例截图为横向滚动截图，部分字段如 `replys`、`reply_users` 未在可见样例中完整出现，未强行补齐。

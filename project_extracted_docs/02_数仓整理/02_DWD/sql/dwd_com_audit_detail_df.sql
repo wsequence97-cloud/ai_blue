@@ -63,17 +63,17 @@ FROM yshopping.ods_community_community_audit_result_df t0
 LEFT JOIN yshopping.dim_code_desc t1
     ON CAST(t0.event_code AS STRING)=t1.code
    AND t1.table_name='ods_community_community_audit_result_df'
-   AND t1.content_type='event_code'
+   AND t1.fields_name='event_code'
 LEFT JOIN yshopping.dim_code_desc t2
     ON CAST(t0.tag_result AS STRING)=t2.code
    AND t2.table_name='ods_community_community_audit_result_df'
-   AND t2.content_type='tag_result'
+   AND t2.fields_name='tag_result'
 LEFT JOIN yshopping.dim_code_desc t3
     ON CAST(t0.content_type AS STRING)=t3.code
    AND t3.table_name='ods_community_community_audit_result_df'
-   AND t3.content_type='content_type'
+   AND t3.fields_name='content_type'
 LEFT JOIN yshopping.dim_code_desc t4
     ON CAST(t0.machine_tag_result AS STRING)=t4.code
    AND t4.table_name='ods_community_community_audit_result_df'
-   AND t4.content_type='machine_tag_result'
+   AND t4.fields_name='machine_tag_result'
 WHERE t0.pt='${bizdate}';

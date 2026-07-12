@@ -35,8 +35,7 @@ STORED AS PARQUET
 TBLPROPERTIES (
     'table.source'='自定义',
     'PARTITION_LIFECYCLE'='7d',
-    'table.creator'='TODO: 截图右侧被截断，需人工确认'
-);
+    'table.creator'='764815144@qq.com', 'SYNC_METASTORE'='on');
 
 INSERT OVERWRITE TABLE yshopping.dwd_com_audit_ai_blue_content_df PARTITION(pt='${bizdate}')
 SELECT
@@ -68,9 +67,9 @@ FROM yshopping.ods_community_ai_blue_content_df t0
 LEFT JOIN yshopping.dim_code_desc t1
     ON CAST(t0.content_type AS STRING)=t1.code
    AND t1.table_name='ods_community_community_trend_df'
-   AND t1.content_type='content_type'
+   AND t1.fields_name='content_type'
 LEFT JOIN yshopping.dim_code_desc t2
-    ON CAST(t0.content_type AS STRING)=t2.code
+    ON CAST(t0.sample_attributes AS STRING)=t2.code
    AND t2.table_name='ods_community_ai_blue_content_df'
-   AND t2.content_type='sample_attributes'
+   AND t2.fields_name='sample_attributes'
 WHERE t0.pt='${bizdate}';

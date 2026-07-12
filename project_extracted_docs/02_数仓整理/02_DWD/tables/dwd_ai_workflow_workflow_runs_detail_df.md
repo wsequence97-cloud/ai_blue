@@ -91,7 +91,7 @@ SELECT
     FROM_UNIXTIME(UNIX_TIMESTAMP(create_time) + 28800) AS create_time,
     FROM_UNIXTIME(UNIX_TIMESTAMP(finish_time) + 28800) AS finish_time,
     exceptions_cnt,
-    GET_JSON_OBJECT(input, '$.id') AS biz_id
+    GET_JSON_OBJECT(inputs, '$.id') AS biz_id
 FROM yshopping.ods_ai_workflow_workflow_runs_df
 WHERE pt='${bizdate}';
 ```

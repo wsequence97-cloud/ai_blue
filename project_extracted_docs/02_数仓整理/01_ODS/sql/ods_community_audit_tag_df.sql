@@ -1,5 +1,6 @@
 -- 来源截图：
--- - 用户于 2026-07-10 补充的 ods_community_audit_tag_df 建表截图
+-- - 数仓/ods/ods_community_audit_tag_df.png
+-- - 用户于 2026-07-12 新增的 ods_community_audit_tag_df 建表截图
 -- 注意：截图标题、表注释及上下游用途均指向 ods_community_audit_tag_df，
 --       但原 CREATE 第 1 行误写为 ods_community_ecology_tag_df；本文按目标表名修正。
 

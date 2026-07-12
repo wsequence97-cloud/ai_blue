@@ -1,6 +1,6 @@
 # 阶段 1 图片资产清单
 
-生成时间：2026-07-09
+生成时间：2026-07-09；2026-07-12 增量更新
 
 阶段边界：
 - 本文件仅完成图片递归扫描、目录统计、分层初步分类和内容类型初判。
@@ -12,8 +12,8 @@
 
 | 指标 | 数量 |
 |---|---:|
-| 图片总数 | 88 |
-| 已按 PRD / ODS / DWD / DWM / DIM / ADS 初步分类 | 88 |
+| 图片总数 | 93 |
+| 已按 PRD / ODS / DWD / DWM / DIM / ADS 初步分类 | 93 |
 | 未分类图片 | 0 |
 
 ## 2. 各目录图片数量
@@ -21,7 +21,7 @@
 | 目录 | 初步所属模块 | 图片数量 |
 |---|---|---:|
 | 大模型社区智能蓝军PRD | PRD | 10 |
-| 数仓/ods | ODS | 24 |
+| 数仓/ods | ODS | 29 |
 | 数仓/dwd | DWD | 26 |
 | 数仓/dwm | DWM | 10 |
 | 数仓/dim | DIM | 5 |
@@ -32,8 +32,8 @@
 | 初步内容类型 | 数量 | 判断依据 |
 |---|---:|---|
 | PRD 截图/页面内容 | 10 | 位于 `大模型社区智能蓝军PRD/`，文件名为页码 |
-| 建表/表结构截图 | 37 | 文件名为表名或表名分片，未带“代码/样例/公式/映射”等关键词 |
-| 数据样例截图 | 11 | 文件名包含“样例” |
+| 建表/表结构截图 | 40 | 文件名为表名或表名分片，未带“代码/样例/公式/映射”等关键词 |
+| 数据样例截图 | 13 | 文件名包含“样例” |
 | SQL/加工代码截图 | 20 | 文件名包含“代码” |
 | 指标计算公式截图 | 5 | 文件名包含“具体计算公式” |
 | SQL 转 JSON / Kafka 推数相关截图 | 2 | 文件名包含“2kafka”或“推数样式” |
@@ -78,10 +78,10 @@
 | 32 | 数仓/ods/ods_community_community_trend_df(样例_2).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_community_community_trend_df |
 | 33 | 数仓/ods/ods_community_community_trend_df(样例_3).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_community_community_trend_df |
 | 34 | 数仓/ods/ods_community_community_trend_df(样例_4).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_community_community_trend_df |
-| 35 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df.png | DWD | 数仓/dwd | 历史建表截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
-| 36 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(1).png | DWD | 数仓/dwd | 历史加工代码截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
-| 37 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(2).png | DWD | 数仓/dwd | 历史加工代码截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
-| 38 | 数仓/dwd/dwd_com_audit_ai_blue_content_df.png | DWD | 数仓/dwd | 建表/表结构截图 | 初步归属表：dwd_com_audit_ai_blue_content_df |
+| 38 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df.png | DWD | 数仓/dwd | 历史建表截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
+| 39 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(1).png | DWD | 数仓/dwd | 历史加工代码截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
+| 40 | 数仓/dwd/dwd_ai_workflow_workflow_detail_df_代码(2).png | DWD | 数仓/dwd | 历史加工代码截图 | 用户于 2026-07-10 确认该表不属于当前项目链路，仅保留原始资产 |
+| 41 | 数仓/dwd/dwd_com_audit_ai_blue_content_df.png | DWD | 数仓/dwd | 建表/表结构截图 | 初步归属表：dwd_com_audit_ai_blue_content_df |
 | 39 | 数仓/dwd/dwd_com_audit_ai_blue_content_df_代码1.png | DWD | 数仓/dwd | SQL/加工代码截图 | 初步归属表：dwd_com_audit_ai_blue_content_df |
 | 40 | 数仓/dwd/dwd_com_audit_ai_blue_content_df_代码2.png | DWD | 数仓/dwd | SQL/加工代码截图 | 初步归属表：dwd_com_audit_ai_blue_content_df |
 | 41 | 数仓/dwd/dwd_com_audit_ai_blue_resource_df.png | DWD | 数仓/dwd | 建表/表结构截图 | 初步归属表：dwd_com_audit_ai_blue_resource_df |
@@ -132,6 +132,11 @@
 | 86 | 数仓/ads/ads_operation_com_ovewview_target_具体计算公式(3).png | ADS | 数仓/ads | 指标计算公式截图 | 初步归属主题：ads_operation_com_ovewview_target 指标口径 |
 | 87 | 数仓/ads/ads_operation_com_ovewview_target_具体计算公式(4).png | ADS | 数仓/ads | 指标计算公式截图 | 初步归属主题：ads_operation_com_ovewview_target 指标口径 |
 | 88 | 数仓/ads/ads_operation_com_ovewview_target_具体计算公式(5).png | ADS | 数仓/ads | 指标计算公式截图 | 初步归属主题：ads_operation_com_ovewview_target 指标口径 |
+| 89 | 数仓/ods/ods_ai_workflow_workflow_runs_df.png | ODS | 数仓/ods | 建表/表结构截图 | 初步归属表：ods_ai_workflow_workflow_runs_df |
+| 90 | 数仓/ods/ods_ai_workflow_workflow_runs_df(样例_1).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_ai_workflow_workflow_runs_df |
+| 91 | 数仓/ods/ods_ai_workflow_workflow_runs_df(样例_2).png | ODS | 数仓/ods | 数据样例截图 | 初步归属表：ods_ai_workflow_workflow_runs_df |
+| 92 | 数仓/ods/ods_community_community_category_df.png | ODS | 数仓/ods | 建表/表结构截图 | 初步归属表：ods_community_community_category_df |
+| 93 | 数仓/ods/ods_community_audit_tag_df.png | ODS | 数仓/ods | 建表/表结构截图 | 初步归属表：ods_community_audit_tag_df；截图 CREATE TABLE 名称误写为 ods_community_ecology_tag_df |
 
 ## 5. 阶段 1 待确认点
 

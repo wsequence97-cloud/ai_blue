@@ -10,7 +10,7 @@ ODS
 
 ## 整理说明
 
-- 本表根据用户于 2026-07-10 补充的建表截图整理。
+- 本表根据 `数仓/ods/ods_community_audit_tag_df.png` 整理。
 - 截图标题、表注释和实际上下游用途均指向 `ods_community_audit_tag_df`，但原 CREATE 第 1 行误写为 `ods_community_ecology_tag_df`；本文按目标表名修正。
 - 当前补充截图只有 DDL，未提供 ODS 数据样例。
 
@@ -31,11 +31,15 @@ ods_community_audit_tag_df
 
 `project_extracted_docs/02_数仓整理/01_ODS/sql/ods_community_audit_tag_df.sql`
 
+## 来源截图
+
+- `数仓/ods/ods_community_audit_tag_df.png`
+
 ## 可复制 SQL
 
 ```sql
 -- 来源截图：
--- - 用户于 2026-07-10 补充的 ods_community_audit_tag_df 建表截图
+-- - 数仓/ods/ods_community_audit_tag_df.png
 -- 注意：截图标题、表注释及上下游用途均指向 ods_community_audit_tag_df，
 --       但原 CREATE 第 1 行误写为 ods_community_ecology_tag_df；本文按目标表名修正。
 

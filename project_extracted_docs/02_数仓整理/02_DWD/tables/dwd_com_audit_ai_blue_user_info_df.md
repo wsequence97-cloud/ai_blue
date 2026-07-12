@@ -59,6 +59,6 @@ FROM yshopping.ods_community_ai_blue_user_info_df t0
 LEFT JOIN yshopping.dim_code_desc t1
     ON CAST(t0.user_style_status AS STRING)=t1.code
    AND t1.table_name='ods_community_ai_blue_user_info_df'
-   AND t1.content_type='user_style_status'
+   AND t1.fields_name='user_style_status'
 WHERE t0.pt='${bizdate}';
 ```

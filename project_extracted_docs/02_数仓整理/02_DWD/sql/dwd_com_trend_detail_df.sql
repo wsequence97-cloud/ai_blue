@@ -133,7 +133,7 @@ FROM yshopping.ods_community_community_trend_df t0
 LEFT JOIN yshopping.dim_code_desc t1
     ON CAST(t0.content_type AS STRING)=t1.code
    AND t1.table_name='ods_community_community_trend_df'
-   AND t1.content_type='content_type'
+   AND t1.fields_name='content_type'
 LEFT JOIN yshopping.dim_code_desc t2
     ON CAST(t0.show_status AS STRING)=t2.code
    AND t2.table_name='ods_community_community_trend_df'

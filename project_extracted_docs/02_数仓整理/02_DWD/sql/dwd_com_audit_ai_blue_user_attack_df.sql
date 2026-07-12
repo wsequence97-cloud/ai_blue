@@ -18,8 +18,7 @@ STORED AS PARQUET
 TBLPROPERTIES (
     'table.source'='自定义',
     'PARTITION_LIFECYCLE'='7d',
-    'table.creator'='TODO: 截图右侧被截断，需人工确认'
-);
+    'table.creator'='764815144@qq.com', 'SYNC_METASTORE'='on');
 
 INSERT OVERWRITE TABLE yshopping.dwd_com_audit_ai_blue_user_attack_df PARTITION(pt='${bizdate}')
 SELECT

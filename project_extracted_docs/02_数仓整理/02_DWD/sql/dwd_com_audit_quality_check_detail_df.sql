@@ -42,9 +42,9 @@ FROM yshopping.ods_community_community_quilty_check_df t0
 LEFT JOIN yshopping.dim_code_desc t1
     ON CAST(t0.audit_result AS STRING)=t1.code
    AND t1.table_name='ods_community_community_audit_result_df'
-   AND t1.content_type='handle_result'
+   AND t1.fields_name='handle_result'
 LEFT JOIN yshopping.dim_code_desc t2
     ON CAST(t0.check_result AS STRING)=t2.code
    AND t2.table_name='ods_community_community_audit_result_df'
-   AND t2.content_type='handle_result'
+   AND t2.fields_name='handle_result'
 WHERE t0.pt='${bizdate}';

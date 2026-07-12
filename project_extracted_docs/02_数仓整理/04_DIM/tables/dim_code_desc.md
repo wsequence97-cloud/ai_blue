@@ -13,9 +13,17 @@ DIM
 
 该截图为手工维护的 code 到中文含义映射，用于 DWD 层把枚举值转换为 name。
 
+## SQL 文件
+
+可执行建表与插入脚本：`project_extracted_docs/02_数仓整理/04_DIM/sql/dim_code_desc.sql`
+
+脚本按截图使用 `fields_name` 作为映射字段名。
+
+当前资料没有提供 `handle_result` 的具体 code/code_desc 映射，因此脚本未自行补充该类数据。
+
 ## 截图可见映射
 
-| table_name | content_type / fields_name | code | code_desc |
+| table_name | fields_name | code | code_desc |
 |---|---|---|---|
 | ods_community_community_audit_result_df | machine_tag_result | remove | 删除 |
 | ods_community_community_audit_result_df | machine_tag_result | lock | 封禁 |
@@ -31,10 +39,10 @@ DIM
 | ods_community_community_audit_result_df | tag_result | hide | 隐藏 |
 | ods_community_community_audit_result_df | tag_result | pass | 通过 |
 | ods_community_community_audit_result_df | tag_result | init | 待审核 |
-| ods_community_community_audit_result_df | scene_code | y104 | 评论 |
-| ods_community_community_audit_result_df | scene_code | y103 | 私信 |
-| ods_community_community_audit_result_df | scene_code | y102 | 直播 |
-| ods_community_community_audit_result_df | scene_code | y101 | 动态 |
+| ods_community_community_audit_result_df | event_code | y104 | 评论 |
+| ods_community_community_audit_result_df | event_code | y103 | 私信 |
+| ods_community_community_audit_result_df | event_code | y102 | 直播 |
+| ods_community_community_audit_result_df | event_code | y101 | 动态 |
 | ods_community_community_trend_df | selected_type | 3 | 扶持作者 |
 | ods_community_community_trend_df | selected_type | 2 | 爆款内容 |
 | ods_community_community_trend_df | selected_type | 1 | 热点内容 |

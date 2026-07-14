@@ -19,6 +19,8 @@ checkpoints/
 .env*
 *.traineddata
 *.pdf
+*.xmind
+.local_untracked_backup/
 
 # Large data/model artifacts
 *.pt

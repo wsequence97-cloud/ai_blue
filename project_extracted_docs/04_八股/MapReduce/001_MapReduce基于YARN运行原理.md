@@ -1,40 +1,50 @@
 # MapReduce基于YARN运行原理
 
-## 一句话结论
+## 一、面试主答
 
-MapReduce负责处理数据，YARN负责为作业分配资源并启动任务。一个MapReduce作业由MRAppMaster协调，Map和Reduce任务在YARN分配的Container中运行，并尽量靠近HDFS数据实现并行计算；资源管理与具体计算相互分离，多个应用和计算框架可共享集群资源，提高整体资源利用率。
+1. MapReduce负责数据计算，YARN负责集群资源管理。客户端把HDFS输入输出路径写入Job配置，并提交程序资源和作业信息；ResourceManager先分配一个Container，由对应NodeManager启动MRAppMaster。
+2. MRAppMaster负责这一整个作业：读取作业和InputSplit信息，向ResourceManager申请Map、Reduce任务所需Container，监控任务进度并处理重试。它不是只管理一个节点，也不亲自处理业务数据。
+3. ResourceManager尽量按HDFS数据位置安排Map Container，各节点的NodeManager负责启动和管理本机Container；Map任务直接读取HDFS，中间结果经Shuffle交给Reduce，Reduce再把结果直接写入HDFS。
+4. 一个作业的任务通常分散在多个节点并行执行，Map数量主要由InputSplit决定，Reduce数量由作业配置决定。NodeManager不负责规划作业或读写HDFS，ApplicationMaster也不是一台固定机器上的常驻公共服务。
 
-## 核心因果链
+## 二、关键流程或代码
 
-Client准备Jar、配置和InputSplit并暂存HDFS → 向RM提交作业描述
-RM分配首个Container → 对应NM启动MRAppMaster
-AM获取作业和InputSplit元数据 → 协调每个Split对应的Map任务
-AM按数据位置偏好向RM申请Map任务Container → NM启动Map任务并直读HDFS
-Map中间结果经Shuffle分发 → AM申请Reduce任务Container并由NM启动
-Reduce汇总后按HDFS写流程输出 → AM通知RM释放Container资源
+```text
+Client提交作业 → RM分配首个Container → NM启动MRAppMaster
+MRAppMaster读取InputSplit → 向RM申请任务Container
+RM按资源与数据位置调度 → 各NM启动Map Task
+Map直读HDFS → Shuffle → 各NM启动Reduce Task
+Reduce直写HDFS → MRAppMaster结束并释放资源
+```
 
-## 实际开发例子
+## 三、本次讨论后的复盘结论
 
-AI蓝军项目中，ODS蓝军内容表清洗写入DWD蓝军内容表。若该Hive任务采用MapReduce引擎，Map可并行读取ODS分区，执行结果写入DWD分区，不直接改写ODS源表。
+- **我原来容易混淆的点：** 曾认为一个NM管理多个AM、一次MapReduce作业通常集中在一个节点，并认为Reduce需要向NM申请创建HDFS输出文件。
+- **修正后的理解：** NM只管理本机Container；AM运行在某个Container中，却协调分散在多个节点的整个作业。任务进程直接访问HDFS，NM只负责容器生命周期和节点资源状态。
+- **以后判断问题的标准：** 按“全局资源、本机容器、单个应用、具体计算”四层区分RM、NM、AM和Task。
+- **一句话记忆：** RM分资源，NM管本机，AM管作业，Task做计算。
 
-## 易错点
+## 四、高频追问
 
-- 大Jar和配置通常先暂存HDFS，RM接收作业描述和资源引用。
-- NM管理本机Container的启动与资源状态，不负责HDFS读写。
-- AM协调整个作业的任务和进度，不只协调一个节点。
+### 追问1：RM、NM和AM分别负责什么？
 
-## 30秒面试回答
+RM掌握全局资源并进行调度，NM汇报并管理本机Container。AM只服务一个Application，负责申请资源、协调任务和监控进度；Map、Reduce Task才执行具体计算。
 
-MapReduce运行在YARN上时，客户端准备程序、配置和HDFS输入输出路径，相关资源通常先暂存HDFS，再向RM提交作业描述。RM先分配一个Container，由相应NM启动MRAppMaster。AM获取作业和InputSplit元数据，先向RM申请Map任务所需Container；RM尽量按数据位置分配，NM启动Map任务。Map任务直接从HDFS读取数据并计算，Map输出经过Shuffle后，AM再申请Reduce任务Container，NM启动Reduce任务。Reduce汇总结果后按HDFS写流程写出文件；作业结束后，AM通知RM释放资源。其中AM不传输HDFS数据，只协调资源和任务；NM只管理本机Container，Map和Reduce任务直接访问HDFS，这样计算资源和数据存储得以协同利用。
+### 追问2：为什么Map任务尽量靠近HDFS数据？
 
-## 高频追问
+Map通常需要读取大量输入数据，把计算安排到数据所在节点或同机架，可以减少跨节点、跨机架传输。无法完全本地化时仍可远程读取，数据本地性是调度偏好，不是硬性保证。
 
-- RM、NM、AM的职责：RM全局资源，NM本机Container，AM单作业协调。
-- 为什么Map尽量靠近数据：减少跨节点读取，提升集群并行吞吐。
-- Map任务如何知道输入路径：Job配置给InputFormat，后者查询HDFS文件与Block位置。
+### 追问3：MapReduce怎么知道HDFS输入路径？
 
-## 官网依据
+输入路径由客户端放入Job配置，而不是RM猜出来。InputFormat依据配置查询文件并生成InputSplit，Split携带逻辑范围和位置提示，供AM安排Map任务。
 
-- [YARN Architecture](https://hadoop.apache.org/docs/stable/hadoop-yarn/hadoop-yarn-site/YARN.html)：说明RM、NM和每应用AM在资源分配、节点管理和作业协调上的职责划分。
-- [InputFormat API](https://hadoop.apache.org/docs/current/api/org/apache/hadoop/mapreduce/InputFormat.html)：说明InputFormat如何生成InputSplit，并将每个逻辑切分分配给一个Mapper。
-- [MapReduce Tutorial](https://hadoop.apache.org/docs/current1/mapred_tutorial.html)：说明输入可被多个Map并行处理，且任务可尽量安排到数据所在节点。
+## 五、项目或开发场景映射
+
+- **通用开发场景：** 一张按天分区的大表可生成多个InputSplit，对应Map任务分散到多个节点读取；Reduce聚合后把新结果写回HDFS。
+- **本项目可真实使用的表述：** DWD蓝军内容SQL读取ODS的`${bizdate}`分区并覆盖写入DWD当天分区，这是仓库可确认的输入输出关系。
+- **不能过度表述的部分：** 仓库不能证明该SQL实际由MapReduce on YARN执行，因此不能声称真实Container数量、任务节点分布或数据本地率。
+
+## 六、参考依据
+
+- [Apache Hadoop YARN](https://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html)：说明RM、NM、ApplicationMaster和Container的职责划分。
+- [MapReduce Tutorial](https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html)：说明作业提交、输入切分、任务执行和数据本地性。

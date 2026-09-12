@@ -16,6 +16,15 @@
           → NM启动AM/cluster模式Driver → Driver申请Executor
           → RM分配Executor Container → NM启动Executor并向Driver注册
 
+1.客户端通过 spark-submit 向 RM 申请新的 Application，先获取 applicationId。  
+2.客户端将应用 Jar、依赖包、配置等上传到 HDFS 的临时目录，因为后续 AM、Executor 可能在任意节点启动，需要有统一可访问的位置。  
+3.客户端携带这些资源路径、启动参数和资源需求，正式向 RM 提交 Application。  
+4.RM 选择一个 NodeManager，并为 ApplicationMaster 分配第一个 Container。  
+5.对应 NodeManager 启动该 Container；在 YARN Cluster 模式下，AM 进程启动，同时在其中启动 Driver。  
+6.Driver 初始化 SparkContext、DAGScheduler、TaskScheduler 等组件，并通过 AM 向 RM 申请 Executor 所需的 Container。  
+7.RM 将 Executor Container 分配到不同节点；各节点的 NodeManager 启动 Executor。Executor 启动后向 Driver 注册，至此应用具备执行计算的资源。
+
+
 运行流程：转换操作形成DAG → Action触发Job → Shuffle切Stage
           → 按分区生成Task → Driver下发给Executor → 执行并反馈
           → 各Stage完成 → Job完成 → Application结束后释放资源

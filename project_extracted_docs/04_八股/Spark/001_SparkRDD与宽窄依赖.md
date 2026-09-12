@@ -1,5 +1,7 @@
 # Spark RDD与宽窄依赖
 
+Transformation（转换算子）：map、filter、flatMap、reduceByKey、join
+Action（行动算子）：count、collect、first、saveAsTextFile
 ## 一、面试主答
 
 1. RDD不是某种文件格式，而是Spark对分布式数据集合的抽象。它把数据划成多个分区，让Task并行计算，同时记录数据从哪里来、经过了哪些转换。

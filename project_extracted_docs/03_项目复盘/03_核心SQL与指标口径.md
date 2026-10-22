@@ -124,9 +124,9 @@
 
 这里的 `success/fail` 主要站在审核防守角度，而 PRD 的“攻击成功率”可能站在蓝军发现问题的角度。面试时应直接说拦截、漏过、放过、误伤。
 
-## 5. ADS 25 个物理字段的口径
+## 5. ADS 当前 21 个物理字段的口径
 
-`ads_operation_com_ovewview_target` 有 25 个 DDL 字段，其中两个是维度字段，23 个为数量或难度相关字段。
+按本轮确认口径，`ads_operation_com_ovewview_target` 当前 DDL 有 21 个非分区字段，其中两个是维度字段、19 个是指标字段；另有分区字段 `pt`。4 个二次投放指标已移除。
 
 ### 5.1 基础规模
 
@@ -150,14 +150,11 @@
 | `person_audit_fail_difficulty_level` | 相似度 `<0.7` 且人审通过/待审时累加难度 |
 | `similarity_difficulty_level` | 相似度 `>0.7` 时累加难度 |
 
-当前 SQL 使用 `person_audit_result`，但 DWM 输出表提供的是 `tag_result_code`，字段无法直接对应，需要确认是否是截图遗漏或旧字段名。
+本轮不改写上述相似度 SQL。当前 SQL 使用 DWM 不存在的 `person_audit_result`，且相似度范围、近 7 日投放次数和难度聚合均待业务核定；该模块暂不保证可执行。
 
-### 5.3 二次投放
+### 5.3 已确认的一素材一次投放规则
 
-| 样本 | 分母 | 分子方向 |
-| --- | --- | --- |
-| 黑样本 | `sample_code=0 AND is_used=1` | 机审或人审出现非 pass/init 时计为二次投放拦截 |
-| 白样本 | `sample_code=1 AND is_used=1` | 当前 SQL 使用“机审非 pass/init OR 人审 pass/init”，同时包含白样本误伤和正确放过，逻辑需确认 |
+一份素材对应一次攻击投放；同一参考内容在不同攻击场景下生成的素材具有不同 `resource_id`，不属于同一素材复投。因此 ADS 不再输出二次投放量/拦截量指标。原 PRD 中的一本多投需求属于历史需求，是否仍需另行定义新业务指标需产品确认。
 
 ### 5.4 机审和人审结果
 
@@ -167,12 +164,14 @@
 | 黑样本机审拦截 | 黑样本且机审非 `init/pass` |
 | 白样本机审误伤 | 白样本且机审非 `init/pass` |
 | 白样本机审放过 | 白样本且机审 `init/pass` |
-| 黑样本人审漏过 | 黑样本且人审 `init/pass` |
-| 黑样本人审拦截 | 黑样本且人审非 `init/pass` |
-| 白样本人审误伤 | 白样本且人审非 `init/pass` |
-| 白样本人审放过 | 白样本且人审 `init/pass` |
+| 黑样本人审漏过 | 黑样本、`is_manual=1` 且人审 `pass` |
+| 黑样本人审拦截 | 黑样本、`is_manual=1` 且人审非 `init/pass` |
+| 白样本人审误伤 | 白样本、`is_manual=1` 且人审非 `init/pass` |
+| 白样本人审放过 | 白样本、`is_manual=1` 且人审 `pass` |
 
-最后一个字段的 SQL 条件是“白样本＋机审通过＋人审不通过”，但字段名包含 `black_sample`，中文注释又写白样本，属于命名与逻辑不一致。
+人审 `init` 是待审核，NULL 表示无结果；两者均不计入人审效果。`is_manual=1` 仅表示已转人工，不能单独作为人审完成标志。六个机审指标保持既定条件，尤其黑样本机审 `init/pass` 继续计为机审漏过。
+
+最后一个字段的 SQL 条件是“白样本＋机审通过＋已完成人审且人审不通过”，但字段名包含 `black_sample`，属于命名与逻辑不一致。建议名为 `ai_blue_white_sample_machine_success_person_audit_fail_cnt_1d`；因下游引用未知，本轮保留旧字段名并待确认后更名。
 
 ## 6. PRD 17 类指标与现有 SQL 的映射
 
@@ -182,7 +181,7 @@
 | 2 | 攻击时间日/周/月筛选 | `date_id`、分区和报表参数 | 部分覆盖；当前 ADS 以素材创建日聚合 |
 | 3 | 累计攻击次数、样本库量级 | `attack_cnt_1d`、`resource_cnt_1d` | 部分覆盖；当前是日聚合，不是累计值 |
 | 4 | 样本攻击次数、黑白样本攻击次数 | attack 及黑白样本数量字段 | 直接覆盖 |
-| 5 | 一本多投成功率 | 二次投放分子/分母字段 | 可派生，但白样本条件需确认 |
+| 5 | 一本多投成功率 | 原 PRD 需求；当前 ADS 已不输出二次投放字段 | 与已确认的一素材一次投放规则冲突，当前不支持；需产品确认需求是否废止或另行定义 |
 | 6 | 黑样本攻击成功率 | 黑样本人审漏过/黑样本数 | 可派生 |
 | 7 | 白样本攻击成功率 | 白样本人审误伤/白样本转人工量 | 部分字段可用，完整分母需确认 |
 | 8 | 防御质量分 | 相似度、难度、标签、漏过数据 | 未看到完整 60% 内容分＋40% 难度分公式 |
@@ -202,12 +201,11 @@
 
 ### P0：可能直接导致建表/装载错误
 
-1. **DWM 输出 DDL 重复字段**：`ai_blue_user_name` 和 `ai_blue_user_icon` 各出现两次。
-2. **DWM 输出列位置错配**：SELECT 有 `t2.ai_blue_user_id`，DDL 没有第二个用户 ID；DDL 有 `user_id`，SELECT 没有 `t3.user_id`。第 32-42 列会错位。
-3. **审核表普通字段与分区字段重复**：DDL 同时在字段列表和 `PARTITIONED BY` 中声明 `event_code`；需要按实际引擎语法确认。
-4. **质检源字段不一致**：ODS DDL 是 `result_result`，DWD INSERT 使用 `check_result`。
-5. **ADS 相似度公式引用不存在字段**：使用 `person_audit_result`，DWM 输出提供 `tag_result_code`。
-6. **攻击 DWD 类型和别名不一致**：DDL 的 `user_id/creator_id/modifier_id` 是 BIGINT，SELECT 将其 CAST 为 STRING；SELECT 还使用 `ai_blue_user_id/ai_blue_attack_task_id` 等别名，而目标列仍按位置写入 `user_id/attack_task_id`。
+1. **DWM 输出位置错配已在本轮修复**：原 SELECT 漏选攻击关系表 `t3.user_id`，使 `user_id` 及后续攻击字段位置错位；当前 SELECT 已补入该字段，尚需目标 Spark 引擎验证 DDL/SELECT 的字段数和类型。
+2. **审核表普通字段与分区字段重复**：DDL 同时在字段列表和 `PARTITIONED BY` 中声明 `event_code`；需要按实际引擎语法确认。
+3. **质检源字段不一致**：ODS DDL 是 `result_result`，DWD INSERT 使用 `check_result`。
+4. **ADS 相似度公式引用不存在字段**：使用 `person_audit_result`，DWM 输出提供的是 `tag_result_code`；本轮按要求保留为 TODO。
+5. **攻击 DWD 类型和别名不一致**：DDL 的 `user_id/creator_id/modifier_id` 是 BIGINT，SELECT CAST 为 STRING 并使用不同别名；目标列按位置写入，需在真实引擎检查隐式转换行为。本轮未修改上游 DWD。
 
 ### P1：可能导致指标错误
 
@@ -216,10 +214,9 @@
 3. **DWM 多个一对多 JOIN 放大**：内容、任务、审核可能形成乘积，导致 COUNT 和 SUM 膨胀。
 4. **审核删除数据未过滤**：ODS 审核有 `is_del`，DWD 审核 SQL没有 `is_del=0` 条件。
 5. **标签字段类型**：审核 DDL 将 `tag_code`、`machine_tag_code` 定义为 BIGINT，DWM 却按逗号字符串 `SPLIT`。
-6. **白样本二次投放 OR 条件**：同时包含误伤和放过，分子含义不单一。
-7. **最后一个交叉指标命名**：字段名写黑样本，逻辑和注释是白样本。
-8. **日指标按素材创建时间分组**：不一定等于攻击发生日或审核完成日。
-9. **通用枚举配置字段需补充确认**：审核 DWD 使用 `event_code` 查维表；质检 DWD 使用 `handle_result`，当前示例主要展示 `tag_result/machine_tag_result`，需要确认维表中是否存在完整配置。
+6. **最后一个交叉指标命名**：字段名写黑样本，逻辑和注释是白样本；建议改名但下游依赖未确认。
+7. **日指标按素材创建时间分组**：不一定等于攻击发生日或审核完成日。
+8. **通用枚举配置字段需补充确认**：审核 DWD 使用 `event_code` 查维表；质检 DWD 使用 `handle_result`，当前示例主要展示 `tag_result/machine_tag_result`，需要确认维表中是否存在完整配置。
 
 ### P2：需要口径或实现边界确认
 
@@ -255,7 +252,7 @@
 - 用少量样本手工验证黑拦截、黑漏过、白放过、白误伤。
 - 分子不得大于分母。
 - 按日指标与任务明细、审核明细交叉核对。
-- 校验首投、复投和近 7 日窗口边界。
+- 对素材粒度执行 `resource_id` 非空、分区内唯一性校验；相似度模块的近 7 日窗口仍待业务核定。
 - 统一空值、待审核和删除数据处理。
 
 ## 9. 面试中的 SQL 深挖点

@@ -9,7 +9,7 @@
 -- 注意：overview 在截图文件名和表名中写作 ovewview，本文保持截图原始拼写。
 -- 用户确认：DDL 原第 5、6 行的 ai_blue_attack_cnt_1d 为重复字段，本文只保留一个。
 -- 用户确认：原截图没有 INSERT OVERWRITE TABLE ... PARTITION(...)，以下按原图保留为独立 SELECT。
--- 注意：源 SQL 中相似度阈值与部分公式图的中文说明不完全一致，本文按代码截图原样整理。
+-- 本轮口径调整：删除二次投放指标；人审指标只计已转人工且结果已完成的记录；六个机审指标保持原条件。
 
 CREATE TABLE `yshopping`.`ads_operation_com_ovewview_target` (
     date_id STRING COMMENT '业务日期',
@@ -22,10 +22,6 @@ CREATE TABLE `yshopping`.`ads_operation_com_ovewview_target` (
     ai_blue_similarity_cnt_1d BIGINT COMMENT '最近1天样本相似度大于0.7近7日人审量',
     ai_blue_similarity_person_audit_fail_difficulty_level_1d DOUBLE COMMENT '最近1天样本相似度小于0.7人审漏过难度',
     ai_blue_similarity_difficulty_level_1d DOUBLE COMMENT '最近1天样本相似度小于0.7人审通过难度',
-    ai_blue_black_sample_second_audit_success_cnt_1d BIGINT COMMENT '最近1天黑样本二次投放拦截量',
-    ai_blue_black_sample_second_cnt_1d BIGINT COMMENT '黑样本二次投放量',
-    ai_blue_white_sample_second_audit_success_cnt_1d BIGINT COMMENT '最近1天黑样本二次投放拦截量',
-    ai_blue_white_sample_second_cnt_1d BIGINT COMMENT '黑样本二次投放量',
     ai_blue_black_sample_machine_audit_fail_cnt_1d BIGINT COMMENT '机审黑样本漏过数',
     ai_blue_black_sample_machine_audit_success_cnt_1d BIGINT COMMENT '机审黑样本拦截数',
     ai_blue_black_sample_cnt_1d BIGINT COMMENT '黑样本数',
@@ -55,34 +51,45 @@ SELECT
     SUM(IF(ai_blue_similarity >= 0.7, attack_task_cnt_7d, 0)) AS ai_blue_similarity_cnt_1d,
     SUM(IF(ai_blue_similarity < 0.7 AND person_audit_result IN ('init','pass'), ai_blue_difficulty_level, 0)) AS ai_blue_similarity_person_audit_fail_difficulty_level_1d,
     SUM(IF(ai_blue_similarity > 0.7, ai_blue_difficulty_level, 0)) AS ai_blue_similarity_difficulty_level_1d,
-    COUNT(IF(
-        ai_blue_sample_code=0
-        AND (machine_tag_result_code NOT IN ('init','pass') OR tag_result_code NOT IN ('init','pass'))
-        AND is_used=1,
-        attack_task_id,
-        NULL
-    )) AS ai_blue_black_sample_second_audit_success_cnt_1d,
-    COUNT(IF(ai_blue_sample_code=0 AND is_used=1, attack_task_id, NULL)) AS ai_blue_black_sample_second_cnt_1d,
-    COUNT(IF(
-        ai_blue_sample_code=1
-        AND (machine_tag_result_code NOT IN ('init','pass') OR tag_result_code IN ('init','pass'))
-        AND is_used=1,
-        attack_task_id,
-        NULL
-    )) AS ai_blue_white_sample_second_audit_success_cnt_1d,
-    COUNT(IF(ai_blue_sample_code=1 AND is_used=1, attack_task_id, NULL)) AS ai_blue_white_sample_second_cnt_1d,
     COUNT(IF(ai_blue_sample_code=0 AND machine_tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_machine_audit_fail_cnt_1d,
     COUNT(IF(ai_blue_sample_code=0 AND machine_tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_machine_audit_success_cnt_1d,
     COUNT(IF(ai_blue_sample_code=0, attack_task_id, NULL)) AS ai_blue_black_sample_cnt_1d,
     COUNT(IF(ai_blue_sample_code=1 AND machine_tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_machine_audit_fail_cnt_1d,
     COUNT(IF(ai_blue_sample_code=1 AND machine_tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_machine_audit_success_cnt_1d,
     COUNT(IF(ai_blue_sample_code=1, attack_task_id, NULL)) AS ai_blue_white_sample_cnt_1d,
-    COUNT(IF(ai_blue_sample_code=0 AND tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_person_audit_fail_cnt_1d,
-    COUNT(IF(ai_blue_sample_code=0 AND tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_black_sample_person_audit_success_cnt_1d,
-    COUNT(IF(ai_blue_sample_code=1 AND tag_result_code NOT IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_person_audit_fail_cnt_1d,
-    COUNT(IF(ai_blue_sample_code=1 AND tag_result_code IN ('init','pass'), attack_task_id, NULL)) AS ai_blue_white_sample_person_audit_success_cnt_1d,
+    COUNT(IF(
+        ai_blue_sample_code = 0
+        AND is_manual = 1
+        AND tag_result_code = 'pass',
+        attack_task_id,
+        NULL
+    )) AS ai_blue_black_sample_person_audit_fail_cnt_1d,
+    COUNT(IF(
+        ai_blue_sample_code = 0
+        AND is_manual = 1
+        AND tag_result_code NOT IN ('init','pass'),
+        attack_task_id,
+        NULL
+    )) AS ai_blue_black_sample_person_audit_success_cnt_1d,
+    COUNT(IF(
+        ai_blue_sample_code = 1
+        AND is_manual = 1
+        AND tag_result_code NOT IN ('init','pass'),
+        attack_task_id,
+        NULL
+    )) AS ai_blue_white_sample_person_audit_fail_cnt_1d,
+    COUNT(IF(
+        ai_blue_sample_code = 1
+        AND is_manual = 1
+        AND tag_result_code = 'pass',
+        attack_task_id,
+        NULL
+    )) AS ai_blue_white_sample_person_audit_success_cnt_1d,
     COUNT(IF(
         ai_blue_sample_code=1
+        AND is_manual = 1
+        AND tag_result_code IS NOT NULL
+        AND tag_result_code <> 'init'
         AND tag_result_code NOT IN ('init','pass')
         AND machine_tag_result_code IN ('init','pass'),
         attack_task_id,

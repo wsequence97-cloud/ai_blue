@@ -7,10 +7,10 @@
 -- - 数仓/dwm/dwm_com_audit_ai_blue_output_detail_df_代码(3).png
 -- - 用户于 2026-07-10 补充的建表截图（原代码第 30-44 行）
 -- 注意：补充截图确认第 35-37 行为空行；第 38、40 行字段按截图原样补入。
--- 用户确认：t1 内容表用户字段改为 content_user_*；t2 用户人设字段保留 ai_blue_user_*。
+-- 用户确认：后置 DWM 以 resource_id 为素材明细粒度；t1 内容表用户字段改为 content_user_*，t2 用户人设字段保留 ai_blue_user_*。
 
 CREATE TABLE IF NOT EXISTS dwm_com_audit_ai_blue_output_detail_df(
-    resource_id STRING COMMENT '素材id',
+    resource_id STRING COMMENT '素材id；后置明细粒度，一行表示一份独立仿真测试素材',
     ai_blue_group_id STRING COMMENT '素材组',
     ai_blue_group_name STRING COMMENT '素材组名称',
     use_time STRING COMMENT '素材使用时间',
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS dwm_com_audit_ai_blue_output_detail_df(
     ai_blue_user_style_code STRING COMMENT '人设生成状态code 1生成中 2生成完成 3生成失败',
     ai_blue_user_style_name STRING COMMENT '人设生成状态name 1生成中 2生成完成 3生成失败',
     user_style_request_id STRING COMMENT '人设生成请求id, workflow id',
-    user_id BIGINT COMMENT '蓝军攻击用户id',
+    user_id BIGINT COMMENT '蓝军攻击用户id（来自攻击关系表 user_id）',
     attack_task_id STRING COMMENT '攻击任务id',
     attack_task_name STRING COMMENT '攻击任务名称',
     attack_task_creator_id BIGINT COMMENT '攻击任务创建人员',
@@ -69,17 +69,17 @@ CREATE TABLE IF NOT EXISTS dwm_com_audit_ai_blue_output_detail_df(
     audit_id STRING COMMENT '审核id',
     event_code STRING COMMENT '业务场景码code',
     event_name STRING COMMENT '业务场景码name',
-    tag_result_code STRING COMMENT '处置结果code：init-待审核, pass-通过, hide-隐藏, lock-封禁, remove-删除, only_fans-仅粉丝可见, anti_spam-反垃圾, show-显示, recover-恢复, unlock-解禁, ignore-忽略, reset-重...',
+    tag_result_code STRING COMMENT '实际人工审核结果code；init表示待审核、尚未完成人审',
     tag_result_name STRING COMMENT '处置结果name',
     tag_time STRING COMMENT '最新审核时间',
     tag_user_id STRING COMMENT '最新审核人ID',
     tag_user_name STRING COMMENT '最新审核人名称',
-    is_manual BIGINT COMMENT '机审是否转人工',
+    is_manual BIGINT COMMENT '是否转人工：1表示转人工，不代表已完成人审',
     machine_audit_time STRING COMMENT '机审时间',
-    machine_tag_result_code STRING COMMENT '机审打标结果code',
+    machine_tag_result_code STRING COMMENT '实际机器审核结果code',
     machine_tag_result_name STRING COMMENT '机审打标结果name'
 )
-COMMENT 'dwd-社区域-审核域-ai智能蓝军输出表-全量表'
+COMMENT '后置蓝军素材效果明细表；以resource_id为素材粒度，保留素材及其已有审核结果'
 PARTITIONED BY (`pt` STRING COMMENT '业务日期')
 STORED AS PARQUET
 TBLPROPERTIES ('table.source'='自定义', 'PARTITION_LIFECYCLE'='7d', 'table.creator'='764815144@qq.com', 'SYNC_METASTORE'='on');
@@ -128,6 +128,7 @@ SELECT
     t2.ai_blue_user_style_code,
     t2.ai_blue_user_style_name,
     t2.user_style_request_id,
+    t3.user_id,
     t3.attack_task_id,
     t3.attack_task_name,
     t3.creator_id AS attack_task_creator_id,
